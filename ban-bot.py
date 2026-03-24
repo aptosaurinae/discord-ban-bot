@@ -85,7 +85,12 @@ async def on_member_update(before: discord.Member, after: discord.Member):
         if LOG_CHANNEL is not None:
             log_channel = after.guild.get_channel(LOG_CHANNEL)
             if log_channel:
-                await log_channel.send(f"{after.mention} gained a forbidden role and was banned.")  # type: ignore
+                await log_channel.send(  # type: ignore
+                    f"{after.mention} gained a forbidden role and was banned.\n"
+                    f"- Created: {after.created_at.isoformat()}\n"
+                    f"- Joined: {after.joined_at.isoformat() if isinstance(after.joined_at, datetime) else 'null'}\n"
+                    f"- Roles: `{str([role.name for role in after.roles])[1:-1]}`"
+                )
             else:
                 logging.info("Attempted to send message to channel, but does not exist")
 
